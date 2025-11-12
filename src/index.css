@@ -1,68 +1,112 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* Custom Theme
+* Its easier to work with colours when using shared variables for dark/light
+* Plus Radix colours look better than Tailwind ones
+*/
+@theme {
+  --font-sans:"Inter", sans-serif;
+  --font-medium:450;
+
+  --color-background: var(--background);
+  --color-primary: var(--gray-12);
+  --color-secondary: var(--gray-11);
+  --color-accent: rgb(var(--accent));
+  --color-ring: var(--accent);
+  --color-border: var(--border);
+
+  --color-gray-1: var(--gray-1);
+  --color-gray-2: var(--gray-2);
+  --color-gray-3: var(--gray-3);
+  --color-gray-4: var(--gray-4);
+  --color-gray-5: var(--gray-5);
+  --color-gray-6: var(--gray-6);
+  --color-gray-7: var(--gray-7);
+  --color-gray-8: var(--gray-8);
+  --color-gray-9: var(--gray-9);
+  --color-gray-10: var(--gray-10);
+  --color-gray-11: var(--gray-11);
+  --color-gray-12: var(--gray-12);
+
+  --color-border: var(--border);
+
+  --shadow-popover: var(--shadow-popover);
+
+  --ease-in: cubic-bezier(0.55, 0.055, 0.675, 0.19);
+  --ease-out: cubic-bezier(0.215, 0.61, 0.355, 1);
+  --ease-in-out: cubic-bezier(0.645, 0.045, 0.355, 1);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-gray-12 font-sans antialiased min-h-screen;
+  }
+}
+
+/* CSS Overides */
+
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+  --gray-0: hsl(0, 0%, 99%);
+  --gray-1: hsl(0, 0%, 98%);
+  --gray-2: hsl(0, 0%, 96%);
+  --gray-3: hsl(0, 0%, 92%);
+  --gray-4: hsl(0, 0%, 88%);
+  --gray-5: hsl(0, 0%, 86%);
+  --gray-6: hsl(0, 0%, 82%);
+  --gray-7: hsl(0, 0%, 76%);
+  --gray-8: hsl(0, 0%, 72%);
+  --gray-9: hsl(0, 0%, 56%);
+  --gray-10: hsl(0, 0%, 52%);
+  --gray-11: hsl(0, 0%, 40%);
+  --gray-12: hsl(0, 0%, 12%);
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  --border: hsla(0, 0%, 12%, 0.1);
 }
+.dark {
+  --gray-0: hsl(0, 0%, 7%);
+  --gray-1: hsl(0, 0%, 10%);
+  --gray-2: hsl(0, 0%, 13%);
+  --gray-3: hsl(0, 0%, 16%);
+  --gray-4: hsl(0, 0%, 19%);
+  --gray-5: hsl(0, 0%, 23%);
+  --gray-6: hsl(0, 0%, 28%);
+  --gray-7: hsl(0, 0%, 36%);
+  --gray-8: hsl(0, 0%, 38%);
+  --gray-9: hsl(0, 0%, 43%);
+  --gray-10: hsl(0, 0%, 48%);
+  --gray-11: hsl(0, 0%, 71%);
+  --gray-12: hsl(0, 0%, 93%);
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
-}
-
-body {
-  margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
-}
-
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+  --border: hsla(0, 0%, 93%, 0.08);
 }
 
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+* {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE 10+ */
+  min-width: 0;
+  border-color: var(--border);
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
+::selection {
+  background: rgb(var(--accent) / 0.08);
+  color: rgb(var(--accent));
+}
+
+::-webkit-scrollbar-track {
+  -webkit-box-shadow: none !important;
+  background-color: transparent;
+}
+::-webkit-scrollbar {
+  width: 3px !important;
+  background-color: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background-color: transparent;
 }
