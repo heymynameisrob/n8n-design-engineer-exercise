@@ -1,4 +1,4 @@
-import { CheckIcon, ChevronRightIcon } from "@heroicons/react/16/solid";
+import { CheckIcon, ChevronRightIcon } from "lucide-react";
 import * as DropdownMenuPrimitive from "@radix-ui/react-dropdown-menu";
 import * as React from "react";
 

@@ -1,6 +1,6 @@
 import * as React from "react";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
-import { XMarkIcon } from "@heroicons/react/16/solid";
+import { XIcon as XMarkIcon } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 

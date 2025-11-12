@@ -10,13 +10,13 @@
 */
 @theme {
   --font-sans:"Inter", sans-serif;
-  --font-medium:450;
+  --font-normal:450;
 
-  --color-background: var(--background);
+  --color-background: var(--gray-0);
   --color-primary: var(--gray-12);
   --color-secondary: var(--gray-11);
   --color-accent: rgb(var(--accent));
-  --color-ring: var(--accent);
+  --color-ring: var(--gray-5);
   --color-border: var(--border);
 
   --color-gray-1: var(--gray-1);
@@ -46,7 +46,7 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-gray-12 font-sans antialiased min-h-screen;
+    @apply bg-background text-gray-12 font-sans font-normal antialiased min-h-screen;
   }
 }
 
