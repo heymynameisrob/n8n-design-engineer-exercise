@@ -1,3 +1,4 @@
+import { NodeDialog } from "@/components/node/node-dialog";
 import { Nodes } from "@/components/node/node-group";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { cn } from "@/lib/utils";
@@ -18,6 +19,7 @@ export function App() {
         <p>Toolbar</p>
         <ThemeToggle />
       </footer>
+      <NodeDialog />
     </div>
   );
 }

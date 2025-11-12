@@ -27,8 +27,11 @@ interface NodeProviderProps {
  */
 
 export function NodesProvider({ children }: NodeProviderProps) {
-  const [nodes, setNodesStorage] = useLocalStorage<Node[]>("nodes", initialNodes);
-  const [selectedNode, setSelectedNode] = React.useState<number | null>(null);
+  const [nodes, setNodesStorage] = useLocalStorage<Node[]>(
+    "nodes",
+    initialNodes,
+  );
+  const [selectedNode, setSelectedNode] = React.useState<number | null>(1);
 
   /** NOTE (@heymynameisrob)
    * This is probably a little premature for our small example
