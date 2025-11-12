@@ -1,3 +1,4 @@
+import { Nodes } from "@/components/node/node-group";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { cn } from "@/lib/utils";
 
@@ -11,7 +12,7 @@ export function App() {
           "bg-[radial-gradient(var(--pattern-fg)_1px,transparent_0)] bg-size-[10px_10px] bg-fixed [--pattern-fg:var(--border)]",
         )}
       >
-        <h1>Hello</h1>
+        <Nodes />
       </main>
       <footer className="flex items-center justify-between h-14 px-3 border-t bg-background">
         <p>Toolbar</p>
