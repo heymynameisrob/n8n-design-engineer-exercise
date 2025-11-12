@@ -43,7 +43,7 @@ export function NodeDialog() {
       <NodeDialogActions node={fullNode} />
       <div className="flex flex-col" ref={ref}>
         <header className="flex flex-row items-center gap-3 p-4">
-          <NodeTypeIcon type={fullNode.type} />
+          <NodeTypeIcon node={fullNode} />
           <div className="flex flex-col">
             <h3 className="text-base font-semibold text-gray-12">
               {typeNames[fullNode.type]}

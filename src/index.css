@@ -47,6 +47,10 @@
   body {
     @apply bg-background text-gray-12 font-sans font-normal antialiased min-h-screen;
   }
+
+  .toaster {
+    @apply w-fit min-w-0;
+  }
 }
 
 /* CSS Overides */

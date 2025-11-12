@@ -3,6 +3,7 @@ import { useLocalStorage } from "react-use";
 
 import type { Node } from "@/lib/types";
 import { initialNodes } from "@/lib/initial-nodes";
+import { toast } from "@/components/primitives/Toast";
 
 type NodeContextValue = {
   nodes: Node[];
@@ -46,15 +47,24 @@ export function NodesProvider({ children }: NodeProviderProps) {
    * Simulate running the node and returning different states
    */
   const handleSetRunningNode = React.useCallback((state: RunningState) => {
+    toast({
+      title: "Running...",
+    });
     setRunningNodeState(state);
     setTimeout(() => {
       if (state.nodeId === 2) {
+        toast({
+          title: "Something went wrong",
+        });
         setRunningNodeState({
           nodeId: state.nodeId,
           status: "error",
           error: "Something went wrong. Try again.",
         });
       } else {
+        toast({
+          title: "Run successful!",
+        });
         setRunningNodeState({
           nodeId: state.nodeId,
           status: "success",
