@@ -18,7 +18,6 @@ export function NodeDialog() {
         position="top-right"
         showOverlay={false}
         size="md"
-        className="shadow-popover"
         onInteractOutside={(e) => e.preventDefault()}
         onOpenAutoFocus={(e) => e.preventDefault()}
       >
