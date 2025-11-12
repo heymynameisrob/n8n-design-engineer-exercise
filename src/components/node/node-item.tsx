@@ -6,16 +6,21 @@ import { TYPE_NAMES } from "@/lib/constants";
 import type { Node } from "@/lib/types";
 import { useNodesContext } from "@/components/provider/provider-node";
 
-export function NodeItem({ node }: { node: Node }) {
+export const NodeItem = React.forwardRef<
+  HTMLButtonElement,
+  { node: Node }
+>(({ node }, ref) => {
   const { selectedNode, setSelectedNode } = useNodesContext();
 
   return (
     <button
+      ref={ref}
       className={cn(
-        "flex items-center gap-2 p-2 rounded-2xl bg-gray-1 border w-fit max-w-64 transition-shadow ring-0 ring-offset-0 ring-offset-background ring-ring",
+        "flex items-center gap-2 p-2 rounded-2xl bg-gray-1 border w-fit max-w-64 transition-shadow ring-0 ring-offset-0 ring-offset-background ring-ring outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
         selectedNode === node.id && "ring-2 ring-offset-2",
       )}
       onClick={() => setSelectedNode(node.id)}
+      onFocus={() => setSelectedNode(node.id)}
     >
       <NodeTypeIcon type={node.type} />
       <div className="flex-1 flex flex-col items-start overflow-hidden pr-2">
@@ -28,7 +33,9 @@ export function NodeItem({ node }: { node: Node }) {
       </div>
     </button>
   );
-}
+});
+
+NodeItem.displayName = "NodeItem";
 
 function NodeTypeIcon({ type }: { type: Node["type"] }) {
   const content = React.useMemo(() => {
