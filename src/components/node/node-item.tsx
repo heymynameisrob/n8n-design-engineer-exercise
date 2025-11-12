@@ -1,8 +1,14 @@
 import * as React from "react";
-import { BoxIcon, Code2Icon, GlobeIcon, WebhookIcon } from "lucide-react";
+import {
+  BoxIcon,
+  Code2Icon,
+  GlobeIcon,
+  PowerOffIcon,
+  WebhookIcon,
+} from "lucide-react";
 
 import { cn } from "@/lib/utils";
-import { TYPE_NAMES } from "@/lib/constants";
+import { typeNames } from "@/lib/constants";
 import type { Node } from "@/lib/types";
 import { useNodesContext } from "@/components/provider/provider-node";
 import { NodeContextMenu } from "@/components/node/node-context-menu";
@@ -22,13 +28,17 @@ export const NodeItem = React.forwardRef<HTMLButtonElement, { node: Node }>(
           onClick={() => setSelectedNode(node.id)}
           onFocus={() => setSelectedNode(node.id)}
         >
-          <NodeTypeIcon type={node.type} />
+          {node.isActive ? (
+            <NodeTypeIcon type={node.type} />
+          ) : (
+            <NodeInactiveIcon />
+          )}
           <div className="flex-1 flex flex-col items-start overflow-hidden pr-2">
             <span className="text-gray-12 font-medium text-sm truncate w-full">
               {node.title}
             </span>
             <span className="capitalize text-gray-10 font-medium text-sm">
-              {TYPE_NAMES[node.type]}
+              {typeNames[node.type]}
             </span>
           </div>
         </button>
@@ -39,7 +49,15 @@ export const NodeItem = React.forwardRef<HTMLButtonElement, { node: Node }>(
 
 NodeItem.displayName = "NodeItem";
 
-function NodeTypeIcon({ type }: { type: Node["type"] }) {
+function NodeInactiveIcon() {
+  return (
+    <div className="shrink-0 size-10 grid place-items-center rounded-xl bg-gray-5 text-gray-11">
+      <PowerOffIcon className="size-6 opacity-70" />
+    </div>
+  );
+}
+
+export function NodeTypeIcon({ type }: { type: Node["type"] }) {
   const content = React.useMemo(() => {
     switch (type) {
       case "http":

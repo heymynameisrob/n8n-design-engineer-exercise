@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useHotkeys } from "react-hotkeys-hook";
 import {
   ContextMenu,
   ContextMenuContent,
@@ -23,7 +24,7 @@ import {
   AlertDialogTitle,
 } from "@/components/primitives/AlertDialog";
 import { Key } from "@/components/primitives/Key";
-import { NODE_TYPES, TYPE_NAMES } from "@/lib/constants";
+import { keyboardShortcuts, nodeTypes, typeNames } from "@/lib/constants";
 import type { Node, NodeType } from "@/lib/types";
 import { NodeFieldsMap } from "@/lib/types";
 import { useNodesContext } from "@/components/provider/provider-node";
@@ -47,24 +48,26 @@ export function NodeContextMenu({
   children: React.ReactNode;
   node?: Node;
 }) {
-  const { nodes, setNodes } = useNodesContext();
+  const { nodes, setNodes, selectedNode, setSelectedNode, setRunningNode } =
+    useNodesContext();
   const [deleteDialogOpen, setDeleteDialogOpen] = React.useState(false);
-
-  if (!node) return <>{children}</>;
+  const isSelected = node?.id === selectedNode;
 
   const handleDelete = () => {
+    if (!node) return;
     setNodes(nodes.filter((n) => n.id !== node.id));
     setDeleteDialogOpen(false);
   };
 
   const handleTypeChange = (newType: NodeType) => {
+    if (!node) return;
     setNodes(
       nodes.map((n) =>
         n.id === node.id
           ? {
               ...n,
               type: newType,
-              title: TYPE_NAMES[newType],
+              title: typeNames[newType],
               fields: NodeFieldsMap[newType].map((field) => ({
                 [field.id]: field,
               })),
@@ -75,6 +78,7 @@ export function NodeContextMenu({
   };
 
   const handleToggleActive = () => {
+    if (!node) return;
     setNodes(
       nodes.map((n) =>
         n.id === node.id
@@ -88,6 +92,7 @@ export function NodeContextMenu({
   };
 
   const handleDuplicate = () => {
+    if (!node) return;
     const maxId = Math.max(...nodes.map((n) => n.id));
     const newNode: Node = {
       ...node,
@@ -95,20 +100,73 @@ export function NodeContextMenu({
       title: `${node.title} (Copy)`,
     };
     setNodes([...nodes, newNode]);
+    return newNode;
   };
+
+  const handleRun = () => {
+    if (!node) return;
+    setRunningNode({ nodeId: node.id, status: "running" });
+  };
+
+  useHotkeys(
+    keyboardShortcuts.run.key,
+    () => {
+      if (!node) return;
+      handleRun();
+    },
+    { enabled: isSelected, preventDefault: true },
+  );
+
+  useHotkeys(
+    keyboardShortcuts.toggleActive.key,
+    () => {
+      if (!node) return;
+      handleToggleActive();
+    },
+    { enabled: isSelected, preventDefault: true },
+  );
+
+  useHotkeys(
+    keyboardShortcuts.duplicate.key,
+    () => {
+      if (!node) return;
+      const newNode = handleDuplicate();
+      if (newNode) {
+        setSelectedNode(newNode.id);
+      }
+    },
+    { enabled: isSelected, preventDefault: true },
+  );
+
+  useHotkeys(
+    keyboardShortcuts.delete.key,
+    () => {
+      if (!node) return;
+      setDeleteDialogOpen(true);
+    },
+    { enabled: isSelected, preventDefault: true },
+  );
+
+  if (!node) return <>{children}</>;
 
   return (
     <>
       <ContextMenu>
         <ContextMenuTrigger asChild>{children}</ContextMenuTrigger>
-        <ContextMenuContent className="w-72">
-          <ContextMenuItem className="gap-2 justify-between">
+        <ContextMenuContent
+          className="w-72"
+          onCloseAutoFocus={(e) => e.preventDefault()}
+        >
+          <ContextMenuItem
+            className="gap-2 justify-between"
+            onSelect={handleRun}
+          >
             <div className="flex items-center gap-2">
               <PlayIcon className="size-4 opacity-70" />
-              <span className="font-medium">Run step</span>
+              <span className="font-medium">{keyboardShortcuts.run.label}</span>
             </div>
             <ContextMenuShortcut>
-              <Key>↩</Key>
+              <Key>{keyboardShortcuts.run.display}</Key>
             </ContextMenuShortcut>
           </ContextMenuItem>
           <ContextMenuItem
@@ -126,7 +184,7 @@ export function NodeContextMenu({
               </span>
             </div>
             <ContextMenuShortcut>
-              <Key>D</Key>
+              <Key>{keyboardShortcuts.toggleActive.display}</Key>
             </ContextMenuShortcut>
           </ContextMenuItem>
           <ContextMenuSeparator />
@@ -134,24 +192,43 @@ export function NodeContextMenu({
           <ContextMenuItem className="gap-2 justify-between">
             <div className="flex items-center gap-2">
               <SquarePenIcon className="size-4 opacity-70" />
-              <span className="font-medium">Convert to subworkflow</span>
+              <span className="font-medium">
+                {keyboardShortcuts.convert.label}
+              </span>
             </div>
             <ContextMenuShortcut>
-              <Key>⌥</Key>
-              <Key>X</Key>
+              {Array.isArray(keyboardShortcuts.convert.display) ? (
+                keyboardShortcuts.convert.display.map((key, i) => (
+                  <Key key={i}>{key}</Key>
+                ))
+              ) : (
+                <Key>{keyboardShortcuts.convert.display}</Key>
+              )}
             </ContextMenuShortcut>
           </ContextMenuItem>
           <ContextMenuItem
             className="gap-2 justify-between"
-            onSelect={handleDuplicate}
+            onSelect={() => {
+              const newNode = handleDuplicate();
+              if (newNode) {
+                setSelectedNode(newNode.id);
+              }
+            }}
           >
             <div className="flex items-center gap-2">
               <CopyIcon className="size-4 opacity-70" />
-              <span className="font-medium">Duplicate</span>
+              <span className="font-medium">
+                {keyboardShortcuts.duplicate.label}
+              </span>
             </div>
             <ContextMenuShortcut>
-              <Key>⌘</Key>
-              <Key>D</Key>
+              {Array.isArray(keyboardShortcuts.duplicate.display) ? (
+                keyboardShortcuts.duplicate.display.map((key, i) => (
+                  <Key key={i}>{key}</Key>
+                ))
+              ) : (
+                <Key>{keyboardShortcuts.duplicate.display}</Key>
+              )}
             </ContextMenuShortcut>
           </ContextMenuItem>
           <ContextMenuSeparator />
@@ -161,10 +238,12 @@ export function NodeContextMenu({
           >
             <div className="flex items-center gap-2 text-red-500">
               <Trash2Icon className="size-4 opacity-70" />
-              <span className="font-medium">Delete</span>
+              <span className="font-medium">
+                {keyboardShortcuts.delete.label}
+              </span>
             </div>
             <ContextMenuShortcut>
-              <Key>Del</Key>
+              <Key>{keyboardShortcuts.delete.display}</Key>
             </ContextMenuShortcut>
           </ContextMenuItem>
         </ContextMenuContent>
@@ -198,10 +277,10 @@ function NodeTypeSwitch({
           value={node.type}
           onValueChange={(value) => onTypeChange(value as NodeType)}
         >
-          {NODE_TYPES.map((type) => (
+          {nodeTypes.map((type) => (
             <ContextMenuRadioItem key={type} value={type} className="gap-2">
               {getNodeTypeIcon(type)}
-              <span className="font-medium">{TYPE_NAMES[type]}</span>
+              <span className="font-medium">{typeNames[type]}</span>
             </ContextMenuRadioItem>
           ))}
         </ContextMenuRadioGroup>

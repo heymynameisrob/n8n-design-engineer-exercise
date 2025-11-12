@@ -10,6 +10,13 @@ export function Nodes() {
   const { nodes, selectedNode, setSelectedNode } = useNodesContext();
   const nodeRefsMap = React.useRef(new Map<number, HTMLButtonElement>());
 
+  // Sync focus with selectedNode state
+  React.useEffect(() => {
+    if (selectedNode !== null) {
+      nodeRefsMap.current.get(selectedNode)?.focus();
+    }
+  }, [selectedNode]);
+
   React.useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       // Only check if we're inside an interactive element, not if one exists
@@ -41,7 +48,6 @@ export function Nodes() {
       if (newIndex !== currentIndex) {
         const newNode = nodes[newIndex];
         setSelectedNode(newNode.id);
-        nodeRefsMap.current.get(newNode.id)?.focus();
       }
     };
 

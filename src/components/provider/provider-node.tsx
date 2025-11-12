@@ -4,20 +4,26 @@ import { useLocalStorage } from "react-use";
 import type { Node } from "@/lib/types";
 import { initialNodes } from "@/lib/initial-nodes";
 
-interface NodeContextValue {
+type NodeContextValue = {
   nodes: Node[];
   setNodes: (nodes: Node[]) => void;
   selectedNode: number | null;
   setSelectedNode: (nodeId: number | null) => void;
-}
+  runningNode: RunningState | null;
+  setRunningNode: (state: RunningState) => void;
+};
 
-const NodeContext = React.createContext<NodeContextValue | undefined>(
-  undefined,
-);
-
-interface NodeProviderProps {
+type NodeProviderProps = {
   children: React.ReactNode;
-}
+};
+
+type RunningState = {
+  nodeId: number;
+  status: "running" | "success" | "error" | "idle";
+  error?: string;
+};
+
+const NodeContext = React.createContext<NodeContextValue | null>(null);
 
 /**
  * NOTE @heymynameisrob
@@ -32,6 +38,34 @@ export function NodesProvider({ children }: NodeProviderProps) {
     initialNodes,
   );
   const [selectedNode, setSelectedNode] = React.useState<number | null>(1);
+  const [runningNode, setRunningNodeState] =
+    React.useState<RunningState | null>(null);
+
+  /**
+   * NOTE @heymynameisrob
+   * Simulate running the node and returning different states
+   */
+  const handleSetRunningNode = React.useCallback((state: RunningState) => {
+    setRunningNodeState(state);
+    setTimeout(() => {
+      if (state.nodeId === 2) {
+        setRunningNodeState({
+          nodeId: state.nodeId,
+          status: "error",
+          error: "Something went wrong. Try again.",
+        });
+      } else {
+        setRunningNodeState({
+          nodeId: state.nodeId,
+          status: "success",
+        });
+      }
+
+      setTimeout(() => {
+        setRunningNodeState(null);
+      }, 3_000);
+    }, 5_000);
+  }, []);
 
   /** NOTE (@heymynameisrob)
    * This is probably a little premature for our small example
@@ -43,14 +77,24 @@ export function NodesProvider({ children }: NodeProviderProps) {
     () => selectedNode,
     [selectedNode],
   );
+
   const value = React.useMemo(
     () => ({
       nodes: memoizedNodes,
       setNodes: (nodes: Node[]) => setNodesStorage(nodes),
       selectedNode: memoizedSelectedNode,
       setSelectedNode,
+      runningNode,
+      setRunningNode: handleSetRunningNode,
     }),
-    [memoizedNodes, memoizedSelectedNode, setNodesStorage, setSelectedNode],
+    [
+      memoizedNodes,
+      memoizedSelectedNode,
+      setNodesStorage,
+      setSelectedNode,
+      runningNode,
+      handleSetRunningNode,
+    ],
   );
 
   return <NodeContext.Provider value={value}>{children}</NodeContext.Provider>;
@@ -58,7 +102,7 @@ export function NodesProvider({ children }: NodeProviderProps) {
 
 export function useNodesContext() {
   const context = React.useContext(NodeContext);
-  if (context === undefined) {
+  if (!context) {
     throw new Error("useNode must be used within a NodeProvider");
   }
   return context;

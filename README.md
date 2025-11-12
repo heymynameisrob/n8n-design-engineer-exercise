@@ -33,10 +33,15 @@ Whilst we have limited research to go on, I'll focus on these challenges first. 
 
 ## Component: In detail
 
-- Selectable node with bubble menu on selected state
-- When selected it should change the view in the NodeDetail view which is a fixed sidebar, sharing state via Context
-- That detail view needs: Build (settings for the node), Status (logs of stuff/error etc)
-- Will add react-flow later
+- [x] Create Node with proper data structure
+- [x] Add details panel that allows for editing the node
+- [x] Add keyboard navigation between nodes
+- [x] Add context menu
+- [ ] Add keyboard shortcuts for key actions
+- [ ] Add 'Run' state that shows 'running', 'error, 'success'
+- [ ] On run validate form to show error (e.g No URL for HTTP request)
 
+- [ ] Add `react-flow` to make realisitic
+- [ ] Add [uiwjs/react-codemirror](https://github.com/uiwjs/react-codemirror) for code editing field
 
 ## Considerations
