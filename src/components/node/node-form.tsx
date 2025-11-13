@@ -3,6 +3,10 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 
+import { Switch } from "@/components/primitives/Switch";
+import { Input } from "@/components/primitives/Input";
+import { Select, SelectOption } from "@/components/primitives/Select";
+import { Textarea } from "@/components/primitives/Textarea";
 import { useNodesContext } from "@/components/provider/provider-node";
 import {
   Form,
@@ -12,14 +16,13 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/primitives/Form";
-import { Input } from "@/components/primitives/Input";
-import { Select, SelectOption } from "@/components/primitives/Select";
-import { Switch } from "@/components/primitives/Switch";
+import { cn } from "@/lib/utils";
+
 import { NodeFieldsMap, type Field, type NodeType } from "@/lib/types";
 
-interface NodeFormProps {
+type NodeFormProps = {
   nodeId: number;
-}
+};
 
 function createFormSchema(fields: Field[]) {
   const schemaShape: Record<string, z.ZodTypeAny> = {
@@ -79,34 +82,28 @@ function formValuesToNodeFields(
 export function NodeForm({ nodeId }: NodeFormProps) {
   const { nodes, setNodes } = useNodesContext();
 
-  // Find the node by ID
   const node = React.useMemo(
     () => nodes.find((n) => n.id === nodeId),
     [nodes, nodeId],
   );
 
-  // Get field definitions based on node type
   const fieldDefinitions = React.useMemo(
     () => (node ? NodeFieldsMap[node.type as NodeType] : []),
     [node],
   );
 
-  // Create the Zod schema dynamically
   const formSchema = React.useMemo(
     () => createFormSchema(fieldDefinitions),
     [fieldDefinitions],
   );
 
-  type FormValues = z.infer<typeof formSchema>;
-
-  // Initialize form with node's current field values
   const defaultValues = React.useMemo(
     () =>
       node ? nodeFieldsToFormValues(node.fields, node.title) : { title: "" },
     [node],
   );
 
-  const form = useForm<FormValues>({
+  const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues,
   });
@@ -142,14 +139,11 @@ export function NodeForm({ nodeId }: NodeFormProps) {
     return () => subscription.unsubscribe();
   }, [form, nodeId, setNodes, fieldDefinitions, node]);
 
-  if (!node) {
-    return <div className="text-sm text-muted-foreground">Node not found</div>;
-  }
+  if (!node) return null;
 
   return (
     <Form {...form}>
-      <form className="space-y-4">
-        {/* Title field - always shown for all node types */}
+      <form className="flex flex-col gap-4">
         <FormField
           control={form.control}
           name="title"
@@ -168,19 +162,17 @@ export function NodeForm({ nodeId }: NodeFormProps) {
           )}
         />
 
-        {/* Dynamic fields based on node type */}
         {fieldDefinitions.map((field) => (
           <FormField
             key={field.id}
             control={form.control}
-            name={field.id as keyof FormValues}
+            name={field.id as keyof z.infer<typeof formSchema>}
             render={({ field: formField }) => (
               <FormItem
-                className={
-                  field.type === "boolean"
-                    ? "flex flex-row items-center justify-between"
-                    : ""
-                }
+                className={cn(
+                  field.type === "boolean" &&
+                    "flex flex-row items-center justify-between",
+                )}
               >
                 <FormLabel>{field.label}</FormLabel>
                 <FormControl>
@@ -193,11 +185,10 @@ export function NodeForm({ nodeId }: NodeFormProps) {
                       ))}
                     </Select>
                   ) : field.type === "textarea" ? (
-                    <textarea
+                    <Textarea
                       {...formField}
                       value={formField.value as string}
                       placeholder={field.placeholder}
-                      className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                     />
                   ) : field.type === "boolean" ? (
                     <Switch

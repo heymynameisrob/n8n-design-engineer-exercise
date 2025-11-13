@@ -1,14 +1,4 @@
-import { NodeForm } from "@/components/node/node-form";
-import { NodeTypeIcon } from "@/components/node/node-type-icon";
-import { NodeDeleteDialog } from "@/components/node/node-delete-dialog";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/components/primitives/Tabs";
-import { useNodesContext } from "@/components/provider/provider-node";
-import { typeNames } from "@/lib/constants";
+import * as React from "react";
 import useMeasure from "react-use-measure";
 import { motion } from "motion/react";
 import {
@@ -18,9 +8,21 @@ import {
   TrashIcon,
   ChevronDownIcon,
 } from "lucide-react";
+
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/components/primitives/Tabs";
 import { Tooltip } from "@/components/primitives/Tooltip";
 import { Button } from "@/components/primitives/Button";
-import * as React from "react";
+import { NodeForm } from "@/components/node/node-form";
+import { NodeTypeIcon } from "@/components/node/node-type-icon";
+import { NodeDeleteDialog } from "@/components/node/node-delete-dialog";
+import { useNodesContext } from "@/components/provider/provider-node";
+import { typeNames } from "@/lib/constants";
+
 import type { Node } from "@/lib/types";
 
 export function NodeDialog() {
@@ -57,21 +59,21 @@ export function NodeDialog() {
           </TabsList>
           <TabsContent
             value="details"
-            className="h-full px-6 py-4 flex flex-col gap-3"
+            className="h-full px-6 py-4 flex flex-col gap-4"
           >
             <NodeForm key={selectedNode} nodeId={selectedNode} />
             <Button
-              size="xs"
+              size="sm"
               variant="ghost"
-              className="justify-between gap-1.5 -mx-1.5"
+              className="justify-between gap-1.5 -mx-3"
             >
               Input
               <ChevronDownIcon className="size-4 opacity-50" />
             </Button>
             <Button
-              size="xs"
+              size="sm"
               variant="ghost"
-              className="justify-between gap-1.5 -mx-1.5"
+              className="justify-between gap-1.5 -mx-3"
             >
               Output
               <ChevronDownIcon className="size-4 opacity-50" />

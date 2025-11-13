@@ -1,5 +1,6 @@
 import { NodeDialog } from "@/components/node/node-dialog";
 import { Nodes } from "@/components/node/node-group";
+import { ResetButton } from "@/components/reset-button";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { cn } from "@/lib/utils";
 
@@ -15,8 +16,8 @@ export function App() {
       >
         <Nodes />
       </main>
-      <footer className="flex items-center justify-between h-14 px-3 border-t bg-background">
-        <p>Toolbar</p>
+      <footer className="fixed bottom-2 right-2 flex items-center gap-1 z-max">
+        <ResetButton />
         <ThemeToggle />
       </footer>
       <NodeDialog />

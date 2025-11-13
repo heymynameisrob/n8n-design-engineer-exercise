@@ -1,17 +1,14 @@
 import * as React from "react";
-import {
-  CheckIcon,
-  LoaderIcon,
-  TriangleAlertIcon,
-} from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
+import { CheckIcon, LoaderIcon, TriangleAlertIcon } from "lucide-react";
 
-import { cn } from "@/lib/utils";
-import { typeNames } from "@/lib/constants";
-import type { Node } from "@/lib/types";
 import { useNodesContext } from "@/components/provider/provider-node";
 import { NodeContextMenu } from "@/components/node/node-context-menu";
 import { NodeTypeIcon } from "@/components/node/node-type-icon";
-import { AnimatePresence, motion } from "motion/react";
+import { cn } from "@/lib/utils";
+import { typeNames } from "@/lib/constants";
+
+import type { Node } from "@/lib/types";
 
 export const NodeItem = React.forwardRef<HTMLButtonElement, { node: Node }>(
   ({ node }, ref) => {

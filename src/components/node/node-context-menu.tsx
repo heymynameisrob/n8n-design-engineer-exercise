@@ -1,6 +1,16 @@
 import * as React from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 import {
+  CopyIcon,
+  PlayIcon,
+  PowerIcon,
+  PowerOffIcon,
+  RefreshCwIcon,
+  SquarePenIcon,
+  Trash2Icon,
+} from "lucide-react";
+
+import {
   ContextMenu,
   ContextMenuContent,
   ContextMenuItem,
@@ -13,22 +23,13 @@ import {
   ContextMenuSubTrigger,
   ContextMenuTrigger,
 } from "@/components/primitives/ContextMenu";
+import { Key } from "@/components/primitives/Key";
 import { NodeDeleteDialog } from "@/components/node/node-delete-dialog";
 import { getNodeTypeIcon } from "@/components/node/node-icons";
-import { Key } from "@/components/primitives/Key";
-import { keyboardShortcuts, nodeTypes, typeNames } from "@/lib/constants";
-import type { Node, NodeType } from "@/lib/types";
-import { NodeFieldsMap } from "@/lib/types";
 import { useNodesContext } from "@/components/provider/provider-node";
-import {
-  CopyIcon,
-  PlayIcon,
-  PowerIcon,
-  PowerOffIcon,
-  RefreshCwIcon,
-  SquarePenIcon,
-  Trash2Icon,
-} from "lucide-react";
+import { keyboardShortcuts, nodeTypes, typeNames } from "@/lib/constants";
+
+import { NodeFieldsMap, type Node, type NodeType } from "@/lib/types";
 
 export function NodeContextMenu({
   children,
@@ -37,13 +38,8 @@ export function NodeContextMenu({
   children: React.ReactNode;
   node?: Node;
 }) {
-  const {
-    nodes,
-    setNodes,
-    selectedNode,
-    setSelectedNode,
-    setRunningNode,
-  } = useNodesContext();
+  const { nodes, setNodes, selectedNode, setSelectedNode, setRunningNode } =
+    useNodesContext();
   const [deleteDialogOpen, setDeleteDialogOpen] = React.useState(false);
   const isSelected = node?.id === selectedNode;
 

@@ -14,7 +14,7 @@ export const initialNodes: Node[] = [
     id: 2,
     type: "code",
     title: "Run analysis on data",
-    isActive: false,
+    isActive: true,
     fields: NodeFieldsCode.map((field) => ({ [field.id]: field })),
     metadata: [],
   },
