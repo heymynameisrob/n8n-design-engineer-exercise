@@ -1,37 +1,89 @@
 import * as React from "react";
-import { NodeItem } from "@/components/node/node-item";
+import {
+  ReactFlow,
+  useNodesState,
+  useEdgesState,
+  addEdge,
+  type Connection,
+  type Edge,
+  type Node as FlowNode,
+} from "@xyflow/react";
+import "@xyflow/react/dist/style.css";
+
 import { useNodesContext } from "@/components/provider/provider-node";
 import { useNodeNavigation } from "@/components/node/use-node-navigation";
+import { CustomFlowNode, type CustomNodeData } from "@/components/node/node-flow-custom";
+
+const nodeTypes = {
+  custom: CustomFlowNode,
+};
 
 export function Nodes() {
   const { nodes, selectedNode, setSelectedNode } = useNodesContext();
-  const nodeRefsMap = React.useRef(new Map<number, HTMLButtonElement>());
 
-  useNodeNavigation(nodes, selectedNode, setSelectedNode);
+  useNodeNavigation(nodes || [], selectedNode, setSelectedNode);
+
+  const flowNodes: FlowNode<CustomNodeData>[] = React.useMemo(() => {
+    if (!nodes) return [];
+
+    return nodes.map((node, index) => ({
+      id: String(node.id),
+      type: "custom",
+      position: { x: index * 300, y: 200 },
+      data: { node },
+    }));
+  }, [nodes]);
+
+  const initialEdges: Edge[] = React.useMemo(() => {
+    if (!nodes || nodes.length <= 1) return [];
+
+    return nodes.slice(0, -1).map((node, index) => ({
+      id: `e${node.id}-${nodes[index + 1].id}`,
+      source: String(node.id),
+      target: String(nodes[index + 1].id),
+      animated: true,
+      style: { strokeWidth: 2 },
+    }));
+  }, [nodes]);
+
+  const [rfNodes, setRfNodes, onNodesChange] = useNodesState(flowNodes);
+  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
 
   React.useEffect(() => {
-    if (selectedNode !== null) {
-      nodeRefsMap.current.get(selectedNode)?.focus();
-    }
-  }, [selectedNode]);
+    setRfNodes(flowNodes);
+  }, [flowNodes, setRfNodes]);
+
+  React.useEffect(() => {
+    setEdges(initialEdges);
+  }, [initialEdges, setEdges]);
+
+  const onConnect = React.useCallback(
+    (params: Connection) => setEdges((eds) => addEdge(params, eds)),
+    [setEdges],
+  );
+
+  const onNodeClick = React.useCallback(
+    (_event: React.MouseEvent, node: FlowNode) => {
+      setSelectedNode(Number(node.id));
+    },
+    [setSelectedNode],
+  );
 
   if (!nodes) return null;
 
   return (
-    <div className="flex items-center justify-center gap-2">
-      {nodes.map((node) => (
-        <NodeItem
-          key={node.id}
-          node={node}
-          ref={(element) => {
-            if (element) {
-              nodeRefsMap.current.set(node.id, element);
-            } else {
-              nodeRefsMap.current.delete(node.id);
-            }
-          }}
-        />
-      ))}
-    </div>
+    <ReactFlow
+      nodes={rfNodes}
+      edges={edges}
+      onNodesChange={onNodesChange}
+      onEdgesChange={onEdgesChange}
+      onConnect={onConnect}
+      onNodeClick={onNodeClick}
+      nodeTypes={nodeTypes}
+      fitView
+      fitViewOptions={{ padding: 0.2 }}
+      minZoom={0.5}
+      maxZoom={1}
+    ></ReactFlow>
   );
 }
