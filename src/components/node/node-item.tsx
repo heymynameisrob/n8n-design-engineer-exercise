@@ -109,7 +109,14 @@ function NodeRunningAnimation({
 }) {
   const { runningNode } = useNodesContext();
   const isNodeRunning = runningNode?.nodeId === nodeId;
-  if (!isNodeRunning) return <>{children}</>;
+  if (!isNodeRunning)
+    return (
+      <div className="relative p-0.5 rounded-[22px] overflow-hidden">
+        <div className="grid place-items-center p-1 rounded-2xl">
+          {children}
+        </div>
+      </div>
+    );
 
   return (
     <div className="relative p-0.5 rounded-[22px] overflow-hidden">
