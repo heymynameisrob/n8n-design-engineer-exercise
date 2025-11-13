@@ -21,7 +21,7 @@ import { NodeForm } from "@/components/node/node-form";
 import { NodeTypeIcon } from "@/components/node/node-type-icon";
 import { NodeDeleteDialog } from "@/components/node/node-delete-dialog";
 import { useNodesContext } from "@/components/provider/provider-node";
-import { typeNames } from "@/lib/constants";
+import { typeDescriptions, typeNames } from "@/lib/constants";
 
 import type { Node } from "@/lib/types";
 
@@ -48,7 +48,7 @@ export function NodeDialog() {
               {typeNames[fullNode.type]}
             </h3>
             <p className="text-sm  text-gray-10">
-              A description about the type here
+              {typeDescriptions[fullNode.type]}
             </p>
           </div>
         </header>

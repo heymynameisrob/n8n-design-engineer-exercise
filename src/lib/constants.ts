@@ -6,7 +6,12 @@ export const typeNames = {
   webhook: "Webhook",
 };
 
-// Keyboard shortcuts
+export const typeDescriptions = {
+  http: "Makes a HTTP request and returns the response data",
+  code: "Run custom JavaScript or Python code",
+  webhook: "Starts the workflow when a webhook is called",
+};
+
 export const keyboardShortcuts = {
   run: {
     key: "enter",
