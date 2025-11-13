@@ -1,13 +1,8 @@
 import * as React from "react";
 import {
-  BoxIcon,
   CheckIcon,
-  Code2Icon,
-  GlobeIcon,
   LoaderIcon,
-  PowerOffIcon,
   TriangleAlertIcon,
-  WebhookIcon,
 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -15,6 +10,7 @@ import { typeNames } from "@/lib/constants";
 import type { Node } from "@/lib/types";
 import { useNodesContext } from "@/components/provider/provider-node";
 import { NodeContextMenu } from "@/components/node/node-context-menu";
+import { NodeTypeIcon } from "@/components/node/node-type-icon";
 import { AnimatePresence, motion } from "motion/react";
 
 export const NodeItem = React.forwardRef<HTMLButtonElement, { node: Node }>(
@@ -58,55 +54,11 @@ export const NodeItem = React.forwardRef<HTMLButtonElement, { node: Node }>(
 
 NodeItem.displayName = "NodeItem";
 
-function NodeInactiveIcon() {
-  return (
-    <div className="shrink-0 size-10 grid place-items-center rounded-xl bg-gray-5 text-gray-11">
-      <PowerOffIcon className="size-6 opacity-70" />
-    </div>
-  );
-}
-
-export function NodeTypeIcon({ node }: { node: Node }) {
-  const type = node.type;
-  const content = React.useMemo(() => {
-    switch (type) {
-      case "http":
-        return <GlobeIcon className="size-6 opacity-70" />;
-      case "code":
-        return <Code2Icon className="size-6 opacity-70" />;
-      case "webhook":
-        return <WebhookIcon className="size-6 opacity-70" />;
-      default:
-        return <BoxIcon className="size-6 opacity-70" />;
-    }
-  }, [type]);
-
-  const styleMap = {
-    http: "bg-blue-300 text-blue-800 dark:blue-500/20 dark:text-white",
-    code: "bg-orange-300 text-orange-800 dark:orange-500/20 dark:text-white",
-    webhook: "bg-cyan-300 text-cyan-800 dark:cyan-500/20 dark:text-white",
-  };
-
-  if (!node.isActive) return <NodeInactiveIcon />;
-
-  return (
-    <div
-      className={cn(
-        "relative z-10 shrink-0 size-10 ring-1 ring-background grid place-items-center rounded-xl",
-        styleMap[type],
-      )}
-      aria-label={type}
-    >
-      {content}
-    </div>
-  );
-}
-
 function NodeRunningIcon() {
   const { runningNode } = useNodesContext();
 
   const content = React.useMemo(() => {
-    if (!runningNode) return;
+    if (!runningNode) return null;
 
     const { status } = runningNode;
     switch (status) {

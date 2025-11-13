@@ -1,5 +1,6 @@
 import { NodeForm } from "@/components/node/node-form";
-import { NodeTypeIcon } from "@/components/node/node-item";
+import { NodeTypeIcon } from "@/components/node/node-type-icon";
+import { NodeDeleteDialog } from "@/components/node/node-delete-dialog";
 import {
   Tabs,
   TabsContent,
@@ -19,16 +20,6 @@ import {
 } from "lucide-react";
 import { Tooltip } from "@/components/primitives/Tooltip";
 import { Button } from "@/components/primitives/Button";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/primitives/AlertDialog";
 import * as React from "react";
 import type { Node } from "@/lib/types";
 
@@ -96,7 +87,7 @@ export function NodeDialog() {
 }
 
 function NodeDialogActions({ node }: { node: Node }) {
-  const { nodes, setNodes } = useNodesContext();
+  const { nodes, setNodes, setRunningNode } = useNodesContext();
   const [deleteDialogOpen, setDeleteDialogOpen] = React.useState(false);
 
   const handleDelete = () => {
@@ -117,11 +108,15 @@ function NodeDialogActions({ node }: { node: Node }) {
     );
   };
 
+  const handleRun = () => {
+    setRunningNode({ nodeId: node.id, status: "running" });
+  };
+
   return (
     <>
       <div className="absolute top-0 right-0 p-2 flex items-center justify-end gap-1">
         <Tooltip content="Run">
-          <Button size="icon" variant="ghost">
+          <Button size="icon" variant="ghost" onClick={handleRun}>
             <PlayIcon className="size-4 opacity-70" />
           </Button>
         </Tooltip>
@@ -145,23 +140,12 @@ function NodeDialogActions({ node }: { node: Node }) {
         </Tooltip>
       </div>
 
-      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Delete node?</AlertDialogTitle>
-            <AlertDialogDescription>
-              Are you sure you want to delete "{node.title}"? This action cannot
-              be undone.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction isDestructive={true} onClick={handleDelete}>
-              Delete
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <NodeDeleteDialog
+        open={deleteDialogOpen}
+        onOpenChange={setDeleteDialogOpen}
+        onConfirm={handleDelete}
+        nodeName={node.title}
+      />
     </>
   );
 }

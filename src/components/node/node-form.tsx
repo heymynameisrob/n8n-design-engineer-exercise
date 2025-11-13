@@ -21,12 +21,8 @@ interface NodeFormProps {
   nodeId: number;
 }
 
-/**
- * Creates a dynamic Zod schema based on the field definitions
- */
 function createFormSchema(fields: Field[]) {
   const schemaShape: Record<string, z.ZodTypeAny> = {
-    // Always include title field for all node types
     title: z.string().min(1, "Title is required"),
   };
 
@@ -43,11 +39,6 @@ function createFormSchema(fields: Field[]) {
   return z.object(schemaShape);
 }
 
-/**
- * Converts node fields array to form values object
- * Node stores: [{ "http_input_1": { id: "http_input_1", value: "GET", ... } }]
- * Form needs: { "http_input_1": "GET", "title": "Node Title" }
- */
 function nodeFieldsToFormValues(
   nodeFields: Record<string, Field>[] | undefined,
   nodeTitle: string,
@@ -71,11 +62,6 @@ function nodeFieldsToFormValues(
   return formValues;
 }
 
-/**
- * Converts form values back to node fields format
- * Form provides: { "http_input_1": "GET" }
- * Node needs: [{ "http_input_1": { id: "http_input_1", value: "GET", ... } }]
- */
 function formValuesToNodeFields(
   formValues: Record<string, string | boolean>,
   fieldDefinitions: Field[],
@@ -125,12 +111,15 @@ export function NodeForm({ nodeId }: NodeFormProps) {
     defaultValues,
   });
 
-  // Watch for form changes and update the node
+  const nodesRef = React.useRef(nodes);
+  React.useEffect(() => {
+    nodesRef.current = nodes;
+  }, [nodes]);
+
   React.useEffect(() => {
     if (!node) return;
 
     const subscription = form.watch((formValues) => {
-      // Update the node in context whenever form changes
       const { title, ...fieldValues } = formValues as Record<
         string,
         string | boolean
@@ -141,7 +130,7 @@ export function NodeForm({ nodeId }: NodeFormProps) {
         fieldDefinitions,
       );
 
-      const updatedNodes = nodes.map((n) =>
+      const updatedNodes = nodesRef.current.map((n) =>
         n.id === nodeId
           ? { ...n, title: (title as string) || n.title, fields: updatedFields }
           : n,
@@ -151,7 +140,7 @@ export function NodeForm({ nodeId }: NodeFormProps) {
     });
 
     return () => subscription.unsubscribe();
-  }, [form, nodeId, nodes, setNodes, fieldDefinitions, node]);
+  }, [form, nodeId, setNodes, fieldDefinitions, node]);
 
   if (!node) {
     return <div className="text-sm text-muted-foreground">Node not found</div>;

@@ -13,32 +13,21 @@ import {
   ContextMenuSubTrigger,
   ContextMenuTrigger,
 } from "@/components/primitives/ContextMenu";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/primitives/AlertDialog";
+import { NodeDeleteDialog } from "@/components/node/node-delete-dialog";
+import { getNodeTypeIcon } from "@/components/node/node-icons";
 import { Key } from "@/components/primitives/Key";
 import { keyboardShortcuts, nodeTypes, typeNames } from "@/lib/constants";
 import type { Node, NodeType } from "@/lib/types";
 import { NodeFieldsMap } from "@/lib/types";
 import { useNodesContext } from "@/components/provider/provider-node";
 import {
-  Code2Icon,
   CopyIcon,
-  GlobeIcon,
   PlayIcon,
   PowerIcon,
   PowerOffIcon,
   RefreshCwIcon,
   SquarePenIcon,
   Trash2Icon,
-  WebhookIcon,
 } from "lucide-react";
 
 export function NodeContextMenu({
@@ -254,7 +243,7 @@ export function NodeContextMenu({
         </ContextMenuContent>
       </ContextMenu>
 
-      <DeleteAlertDialog
+      <NodeDeleteDialog
         open={deleteDialogOpen}
         onOpenChange={setDeleteDialogOpen}
         onConfirm={handleDelete}
@@ -292,47 +281,4 @@ function NodeTypeSwitch({
       </ContextMenuSubContent>
     </ContextMenuSub>
   );
-}
-
-function DeleteAlertDialog({
-  open,
-  onOpenChange,
-  onConfirm,
-  nodeName,
-}: {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  onConfirm: () => void;
-  nodeName: string;
-}) {
-  return (
-    <AlertDialog open={open} onOpenChange={onOpenChange}>
-      <AlertDialogContent>
-        <AlertDialogHeader>
-          <AlertDialogTitle>Delete node?</AlertDialogTitle>
-          <AlertDialogDescription>
-            Are you sure you want to delete "{nodeName}"? This action cannot be
-            undone.
-          </AlertDialogDescription>
-        </AlertDialogHeader>
-        <AlertDialogFooter>
-          <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction isDestructive={true} onClick={onConfirm}>
-            Delete
-          </AlertDialogAction>
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
-  );
-}
-
-function getNodeTypeIcon(type: NodeType) {
-  switch (type) {
-    case "http":
-      return <GlobeIcon className="size-4 opacity-70" />;
-    case "code":
-      return <Code2Icon className="size-4 opacity-70" />;
-    case "webhook":
-      return <WebhookIcon className="size-4 opacity-70" />;
-  }
 }
