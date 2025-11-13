@@ -32,10 +32,16 @@ const TextareaFieldSchema = BaseFieldSchema.extend({
   placeholder: z.string().optional(),
 });
 
+const BooleanFieldSchema = BaseFieldSchema.extend({
+  type: z.literal("boolean"),
+  value: z.boolean(),
+});
+
 export const FieldSchema = z.discriminatedUnion("type", [
   TextFieldSchema,
   SelectFieldSchema,
   TextareaFieldSchema,
+  BooleanFieldSchema,
 ]);
 
 export type Field = z.infer<typeof FieldSchema>;
@@ -66,6 +72,24 @@ export const NodeFieldsHttp = [
     type: "text" as const,
     value: "",
     placeholder: "https://example.com",
+  },
+  {
+    id: "http_input_3",
+    label: "Send headers",
+    type: "boolean" as const,
+    value: false,
+  },
+  {
+    id: "http_input_4",
+    label: "Send query params",
+    type: "boolean" as const,
+    value: false,
+  },
+  {
+    id: "http_input_5",
+    label: "Send body",
+    type: "boolean" as const,
+    value: false,
   },
 ] satisfies Field[];
 

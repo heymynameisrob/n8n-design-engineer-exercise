@@ -14,6 +14,7 @@ import {
 } from "@/components/primitives/Form";
 import { Input } from "@/components/primitives/Input";
 import { Select, SelectOption } from "@/components/primitives/Select";
+import { Switch } from "@/components/primitives/Switch";
 import { NodeFieldsMap, type Field, type NodeType } from "@/lib/types";
 
 interface NodeFormProps {
@@ -34,6 +35,8 @@ function createFormSchema(fields: Field[]) {
       schemaShape[field.id] = z.string();
     } else if (field.type === "select") {
       schemaShape[field.id] = z.string();
+    } else if (field.type === "boolean") {
+      schemaShape[field.id] = z.boolean();
     }
   });
 
@@ -45,8 +48,11 @@ function createFormSchema(fields: Field[]) {
  * Node stores: [{ "http_input_1": { id: "http_input_1", value: "GET", ... } }]
  * Form needs: { "http_input_1": "GET", "title": "Node Title" }
  */
-function nodeFieldsToFormValues(nodeFields: Record<string, Field>[] | undefined, nodeTitle: string) {
-  const formValues: Record<string, string> = {
+function nodeFieldsToFormValues(
+  nodeFields: Record<string, Field>[] | undefined,
+  nodeTitle: string,
+) {
+  const formValues: Record<string, string | boolean> = {
     title: nodeTitle,
   };
 
@@ -71,8 +77,8 @@ function nodeFieldsToFormValues(nodeFields: Record<string, Field>[] | undefined,
  * Node needs: [{ "http_input_1": { id: "http_input_1", value: "GET", ... } }]
  */
 function formValuesToNodeFields(
-  formValues: Record<string, string>,
-  fieldDefinitions: Field[]
+  formValues: Record<string, string | boolean>,
+  fieldDefinitions: Field[],
 ) {
   return fieldDefinitions.map((fieldDef) => {
     return {
@@ -90,27 +96,28 @@ export function NodeForm({ nodeId }: NodeFormProps) {
   // Find the node by ID
   const node = React.useMemo(
     () => nodes.find((n) => n.id === nodeId),
-    [nodes, nodeId]
+    [nodes, nodeId],
   );
 
   // Get field definitions based on node type
   const fieldDefinitions = React.useMemo(
-    () => node ? NodeFieldsMap[node.type as NodeType] : [],
-    [node]
+    () => (node ? NodeFieldsMap[node.type as NodeType] : []),
+    [node],
   );
 
   // Create the Zod schema dynamically
   const formSchema = React.useMemo(
     () => createFormSchema(fieldDefinitions),
-    [fieldDefinitions]
+    [fieldDefinitions],
   );
 
   type FormValues = z.infer<typeof formSchema>;
 
   // Initialize form with node's current field values
   const defaultValues = React.useMemo(
-    () => node ? nodeFieldsToFormValues(node.fields, node.title) : { title: "" },
-    [node]
+    () =>
+      node ? nodeFieldsToFormValues(node.fields, node.title) : { title: "" },
+    [node],
   );
 
   const form = useForm<FormValues>({
@@ -124,17 +131,20 @@ export function NodeForm({ nodeId }: NodeFormProps) {
 
     const subscription = form.watch((formValues) => {
       // Update the node in context whenever form changes
-      const { title, ...fieldValues } = formValues as Record<string, string>;
+      const { title, ...fieldValues } = formValues as Record<
+        string,
+        string | boolean
+      >;
 
       const updatedFields = formValuesToNodeFields(
         fieldValues,
-        fieldDefinitions
+        fieldDefinitions,
       );
 
       const updatedNodes = nodes.map((n) =>
         n.id === nodeId
-          ? { ...n, title: title || n.title, fields: updatedFields }
-          : n
+          ? { ...n, title: (title as string) || n.title, fields: updatedFields }
+          : n,
       );
 
       setNodes(updatedNodes);
@@ -158,7 +168,11 @@ export function NodeForm({ nodeId }: NodeFormProps) {
             <FormItem>
               <FormLabel>Title</FormLabel>
               <FormControl>
-                <Input {...field} value={field.value as string} placeholder="Enter node title" />
+                <Input
+                  {...field}
+                  value={field.value as string}
+                  placeholder="Enter node title"
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -172,14 +186,17 @@ export function NodeForm({ nodeId }: NodeFormProps) {
             control={form.control}
             name={field.id as keyof FormValues}
             render={({ field: formField }) => (
-              <FormItem>
+              <FormItem
+                className={
+                  field.type === "boolean"
+                    ? "flex flex-row items-center justify-between"
+                    : ""
+                }
+              >
                 <FormLabel>{field.label}</FormLabel>
                 <FormControl>
                   {field.type === "select" ? (
-                    <Select
-                      {...formField}
-                      value={formField.value as string}
-                    >
+                    <Select {...formField} value={formField.value as string}>
                       {field.options.map((option) => (
                         <SelectOption key={option} value={option}>
                           {option}
@@ -192,6 +209,12 @@ export function NodeForm({ nodeId }: NodeFormProps) {
                       value={formField.value as string}
                       placeholder={field.placeholder}
                       className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                    />
+                  ) : field.type === "boolean" ? (
+                    <Switch
+                      size="sm"
+                      checked={formField.value as boolean}
+                      onCheckedChange={formField.onChange}
                     />
                   ) : (
                     <Input

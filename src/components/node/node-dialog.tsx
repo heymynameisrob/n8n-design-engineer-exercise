@@ -10,7 +10,13 @@ import { useNodesContext } from "@/components/provider/provider-node";
 import { typeNames } from "@/lib/constants";
 import useMeasure from "react-use-measure";
 import { motion } from "motion/react";
-import { PlayIcon, PowerOffIcon, PowerIcon, TrashIcon } from "lucide-react";
+import {
+  PlayIcon,
+  PowerOffIcon,
+  PowerIcon,
+  TrashIcon,
+  ChevronDownIcon,
+} from "lucide-react";
 import { Tooltip } from "@/components/primitives/Tooltip";
 import { Button } from "@/components/primitives/Button";
 import {
@@ -58,8 +64,27 @@ export function NodeDialog() {
             <TabsTrigger value="details">Details</TabsTrigger>
             <TabsTrigger value="logs">Logs</TabsTrigger>
           </TabsList>
-          <TabsContent value="details" className="h-full p-6">
+          <TabsContent
+            value="details"
+            className="h-full px-6 py-4 flex flex-col gap-3"
+          >
             <NodeForm key={selectedNode} nodeId={selectedNode} />
+            <Button
+              size="xs"
+              variant="ghost"
+              className="justify-between gap-1.5 -mx-1.5"
+            >
+              Input
+              <ChevronDownIcon className="size-4 opacity-50" />
+            </Button>
+            <Button
+              size="xs"
+              variant="ghost"
+              className="justify-between gap-1.5 -mx-1.5"
+            >
+              Output
+              <ChevronDownIcon className="size-4 opacity-50" />
+            </Button>
           </TabsContent>
           <TabsContent value="logs">
             <p>Logs</p>

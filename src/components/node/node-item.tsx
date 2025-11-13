@@ -20,31 +20,37 @@ import { AnimatePresence, motion } from "motion/react";
 export const NodeItem = React.forwardRef<HTMLButtonElement, { node: Node }>(
   ({ node }, ref) => {
     const { selectedNode, setSelectedNode, runningNode } = useNodesContext();
-    const isNodeRunning = runningNode?.nodeId === node.id;
+    const isNodeRunning = node.id === runningNode?.nodeId;
 
     return (
       <NodeContextMenu node={node}>
-        <button
-          ref={ref}
-          className={cn(
-            "relative flex items-center gap-2 p-2 h-[58px] rounded-2xl bg-gray-1 border w-fit max-w-64 transition-shadow ring-0 ring-offset-0 ring-offset-background ring-ring outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
-            selectedNode === node.id && "ring-2 ring-offset-2",
-          )}
-          onClick={() => setSelectedNode(node.id)}
-          onFocus={() => setSelectedNode(node.id)}
-        >
-          <div className="flex items-center gap-2">
-            {isNodeRunning ? <NodeRunningIcon /> : <NodeTypeIcon node={node} />}
-            <div className="flex-1 flex flex-col items-start overflow-hidden pr-2">
-              <span className="text-gray-12 font-medium text-sm truncate w-full">
-                {node.title}
-              </span>
-              <span className="capitalize text-gray-10 font-medium text-sm">
-                {typeNames[node.type]}
-              </span>
+        <NodeRunningAnimation nodeId={node.id}>
+          <button
+            ref={ref}
+            className={cn(
+              "relative flex items-center gap-2 p-2 h-[58px] rounded-2xl bg-gray-1 border w-fit max-w-64 transition-shadow ring-0 ring-offset-0 ring-offset-background ring-ring outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
+              selectedNode === node.id && "ring-2 ring-offset-2",
+            )}
+            onClick={() => setSelectedNode(node.id)}
+            onFocus={() => setSelectedNode(node.id)}
+          >
+            <div className="flex items-center gap-2">
+              {isNodeRunning ? (
+                <NodeRunningIcon />
+              ) : (
+                <NodeTypeIcon node={node} />
+              )}
+              <div className="flex-1 flex flex-col items-start overflow-hidden pr-2">
+                <span className="text-gray-12 font-medium text-sm truncate w-full">
+                  {node.title}
+                </span>
+                <span className="capitalize text-gray-10 font-medium text-sm">
+                  {typeNames[node.type]}
+                </span>
+              </div>
             </div>
-          </div>
-        </button>
+          </button>
+        </NodeRunningAnimation>
       </NodeContextMenu>
     );
   },
@@ -141,6 +147,55 @@ function NodeRunningIcon() {
           {content}
         </motion.div>
       </AnimatePresence>
+    </div>
+  );
+}
+
+function NodeRunningAnimation({
+  nodeId,
+  children,
+}: {
+  nodeId: number;
+  children: React.ReactNode;
+}) {
+  const { runningNode } = useNodesContext();
+  const isNodeRunning = runningNode?.nodeId === nodeId;
+  if (!isNodeRunning) return <>{children}</>;
+
+  return (
+    <div className="relative p-0.5 rounded-[22px] overflow-hidden">
+      {runningNode.status === "running" && (
+        <motion.div
+          animate={{
+            rotate: 360,
+            transition: { duration: 1, ease: "linear", repeat: Infinity },
+          }}
+          className="absolute -inset-10 bg-[conic-gradient(from_0deg,transparent_0%,var(--color-accent)_25%,transparent_35%)]"
+        />
+      )}
+      {runningNode.status === "success" && (
+        <motion.div
+          initial={{ opacity: 1, rotate: 0 }}
+          animate={{
+            opacity: 0,
+            rotate: 360,
+            transition: { duration: 1, ease: "linear" },
+          }}
+          className="absolute -inset-10 bg-[conic-gradient(from_0deg,transparent_0%,var(--color-green-500)_25%,transparent_35%)]"
+        />
+      )}
+      {runningNode.status === "error" && (
+        <motion.div
+          initial={{ opacity: 1, rotate: 0 }}
+          animate={{
+            opacity: 0,
+            rotate: 360,
+            transition: { duration: 1, ease: "linear" },
+          }}
+          className="absolute -inset-10 bg-[conic-gradient(from_0deg,transparent_0%,var(--color-red-500)_25%,transparent_35%)]"
+        />
+      )}
+      <div className="grid place-items-center p-1 rounded-2xl">{children}</div>
     </div>
   );
 }

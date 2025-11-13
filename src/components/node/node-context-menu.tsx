@@ -48,8 +48,13 @@ export function NodeContextMenu({
   children: React.ReactNode;
   node?: Node;
 }) {
-  const { nodes, setNodes, selectedNode, setSelectedNode, setRunningNode } =
-    useNodesContext();
+  const {
+    nodes,
+    setNodes,
+    selectedNode,
+    setSelectedNode,
+    setRunningNode,
+  } = useNodesContext();
   const [deleteDialogOpen, setDeleteDialogOpen] = React.useState(false);
   const isSelected = node?.id === selectedNode;
 
