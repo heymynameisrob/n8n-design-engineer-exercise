@@ -30,8 +30,33 @@ function createFormSchema(fields: Field[]) {
   };
 
   fields.forEach((field) => {
-    if (field.type === "text" || field.type === "textarea") {
-      schemaShape[field.id] = z.string();
+    if (field.type === "text") {
+      // Add validation for required text fields (URL and Webhook URL require validation)
+      if (field.id === "http_input_2") {
+        schemaShape[field.id] = z
+          .string()
+          .min(1, "URL is required")
+          .url("Please enter a valid URL");
+      } else if (field.id === "webhook_input_1") {
+        schemaShape[field.id] = z
+          .string()
+          .min(1, "Webhook URL is required")
+          .url("Please enter a valid URL");
+      } else {
+        schemaShape[field.id] = z.string();
+      }
+    } else if (field.type === "textarea") {
+      // Add validation for code field
+      if (field.id === "code_input_1") {
+        schemaShape[field.id] = z
+          .string()
+          .min(1, "Code is required")
+          .refine((code) => code.trim().length > 0, {
+            message: "Code cannot be empty or whitespace only",
+          });
+      } else {
+        schemaShape[field.id] = z.string();
+      }
     } else if (field.type === "select") {
       schemaShape[field.id] = z.string();
     } else if (field.type === "boolean") {
@@ -80,7 +105,7 @@ function formValuesToNodeFields(
 }
 
 export function NodeForm({ nodeId }: NodeFormProps) {
-  const { nodes, setNodes } = useNodesContext();
+  const { nodes, setNodes, setFormInstance } = useNodesContext();
 
   const node = React.useMemo(
     () => nodes.find((n) => n.id === nodeId),
@@ -108,11 +133,19 @@ export function NodeForm({ nodeId }: NodeFormProps) {
     defaultValues,
   });
 
+  React.useEffect(() => {
+    setFormInstance(nodeId, form);
+    return () => {
+      setFormInstance(nodeId, null);
+    };
+  }, [nodeId, form, setFormInstance]);
+
   const nodesRef = React.useRef(nodes);
   React.useEffect(() => {
     nodesRef.current = nodes;
   }, [nodes]);
 
+  /** Auto update nodes on form change */
   React.useEffect(() => {
     if (!node) return;
 
@@ -157,7 +190,7 @@ export function NodeForm({ nodeId }: NodeFormProps) {
                   placeholder="Enter node title"
                 />
               </FormControl>
-              <FormMessage />
+              <FormMessage className="text-red-500" />
             </FormItem>
           )}
         />
@@ -204,7 +237,7 @@ export function NodeForm({ nodeId }: NodeFormProps) {
                     />
                   )}
                 </FormControl>
-                <FormMessage />
+                <FormMessage className="text-red-500" />
               </FormItem>
             )}
           />

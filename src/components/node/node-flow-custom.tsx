@@ -1,6 +1,7 @@
 import * as React from "react";
 import { Handle, Position, type NodeProps } from "@xyflow/react";
 import { NodeItem } from "@/components/node/node-item";
+import { NodeContextMenu } from "@/components/node/node-context-menu";
 import { useNodesContext } from "@/components/provider/provider-node";
 import type { Node } from "@/lib/types";
 
@@ -30,36 +31,38 @@ export const CustomFlowNode = React.memo(({ data }: NodeProps) => {
   }, [selectedNode, typedData.node.id]);
 
   return (
-    <div ref={nodeRef}>
-      {/* Target handle (input) - positioned at the left */}
-      <Handle
-        type="target"
-        position={Position.Left}
-        style={{
-          background: "var(--color-gray-8)",
-          width: 8,
-          height: 8,
-          border: "2px solid var(--color-gray-1)",
-        }}
-        isConnectable={true}
-      />
+    <NodeContextMenu node={typedData.node}>
+      <div ref={nodeRef}>
+        {/* Target handle (input) - positioned at the left */}
+        <Handle
+          type="target"
+          position={Position.Left}
+          style={{
+            background: "var(--color-gray-8)",
+            width: 8,
+            height: 8,
+            border: "2px solid var(--color-gray-1)",
+          }}
+          isConnectable={true}
+        />
 
-      {/* Render the existing NodeItem component */}
-      <NodeItem node={typedData.node} />
+        {/* Render the existing NodeItem component */}
+        <NodeItem node={typedData.node} />
 
-      {/* Source handle (output) - positioned at the right */}
-      <Handle
-        type="source"
-        position={Position.Right}
-        style={{
-          background: "var(--color-gray-8)",
-          width: 8,
-          height: 8,
-          border: "2px solid var(--color-gray-1)",
-        }}
-        isConnectable={true}
-      />
-    </div>
+        {/* Source handle (output) - positioned at the right */}
+        <Handle
+          type="source"
+          position={Position.Right}
+          style={{
+            background: "var(--color-gray-8)",
+            width: 8,
+            height: 8,
+            border: "2px solid var(--color-gray-1)",
+          }}
+          isConnectable={true}
+        />
+      </div>
+    </NodeContextMenu>
   );
 });
 

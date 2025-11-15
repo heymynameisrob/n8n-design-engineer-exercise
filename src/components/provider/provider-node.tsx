@@ -1,5 +1,6 @@
 import * as React from "react";
 import { useLocalStorage } from "react-use";
+import type { UseFormReturn } from "react-hook-form";
 
 import type { Node } from "@/lib/types";
 import { initialNodes } from "@/lib/initial-nodes";
@@ -12,6 +13,7 @@ type NodeContextValue = {
   setSelectedNode: (nodeId: number | null) => void;
   runningNode: RunningState | null;
   setRunningNode: (state: RunningState) => void;
+  setFormInstance: (nodeId: number, form: UseFormReturn<any> | null) => void;
 };
 
 type NodeProviderProps = {
@@ -41,41 +43,77 @@ export function NodesProvider({ children }: NodeProviderProps) {
   const [selectedNode, setSelectedNode] = React.useState<number | null>(1);
   const [runningNode, setRunningNodeState] =
     React.useState<RunningState | null>(null);
+  const formInstancesRef = React.useRef<Map<number, UseFormReturn<any>>>(
+    new Map(),
+  );
+
+  const setFormInstance = React.useCallback(
+    (nodeId: number, form: UseFormReturn<any> | null) => {
+      if (form) {
+        formInstancesRef.current.set(nodeId, form);
+      } else {
+        formInstancesRef.current.delete(nodeId);
+      }
+    },
+    [],
+  );
 
   /**
    * NOTE @heymynameisrob
    * Simulate running the node and returning different states
    */
-  const handleSetRunningNode = React.useCallback((state: RunningState) => {
-    toast({
-      title: "Running...",
-    });
-    setRunningNodeState(state);
-    setTimeout(() => {
-      if (state.nodeId === 2) {
-        toast({
-          title: "Something went wrong",
-        });
-        setRunningNodeState({
-          nodeId: state.nodeId,
-          status: "error",
-          error: "Something went wrong. Try again.",
-        });
-      } else {
-        toast({
-          title: "Run successful!",
-        });
-        setRunningNodeState({
-          nodeId: state.nodeId,
-          status: "success",
-        });
+  const handleSetRunningNode = React.useCallback(
+    async (state: RunningState) => {
+      // Validate form before running
+      const form = formInstancesRef.current.get(state.nodeId);
+      if (form) {
+        const isValid = await form.trigger();
+        if (!isValid) {
+          // Set running state to error to show validation failed
+          setRunningNodeState({
+            nodeId: state.nodeId,
+            status: "error",
+            error: "Validation failed. Please fix the errors in the form.",
+          });
+
+          setTimeout(() => {
+            setRunningNodeState(null);
+          }, 3_000);
+          return;
+        }
       }
 
+      toast({
+        title: "Running...",
+      });
+      setRunningNodeState(state);
       setTimeout(() => {
-        setRunningNodeState(null);
-      }, 3_000);
-    }, 5_000);
-  }, []);
+        if (state.nodeId === 2) {
+          toast({
+            title: "Something went wrong",
+          });
+          setRunningNodeState({
+            nodeId: state.nodeId,
+            status: "error",
+            error: "Something went wrong. Try again.",
+          });
+        } else {
+          toast({
+            title: "Run successful!",
+          });
+          setRunningNodeState({
+            nodeId: state.nodeId,
+            status: "success",
+          });
+        }
+
+        setTimeout(() => {
+          setRunningNodeState(null);
+        }, 3_000);
+      }, 5_000);
+    },
+    [],
+  );
 
   /** NOTE (@heymynameisrob)
    * This is probably a little premature for our small example
@@ -96,6 +134,7 @@ export function NodesProvider({ children }: NodeProviderProps) {
       setSelectedNode,
       runningNode,
       setRunningNode: handleSetRunningNode,
+      setFormInstance,
     }),
     [
       memoizedNodes,
@@ -104,6 +143,7 @@ export function NodesProvider({ children }: NodeProviderProps) {
       setSelectedNode,
       runningNode,
       handleSetRunningNode,
+      setFormInstance,
     ],
   );
 
