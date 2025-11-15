@@ -30,3 +30,22 @@ function shouldIgnoreKeyboardEvent(event: KeyboardEvent): boolean {
     isContentEditable
   );
 }
+
+export function getDeterministicWidth(index: number) {
+  const ranges = [
+    { min: 200, max: 350 },
+    { min: 150, max: 280 },
+    { min: 180, max: 320 },
+  ];
+
+  // Use modulo to pick which range based on the index
+  const rangeIndex = index % 3;
+  const { min, max } = ranges[rangeIndex];
+
+  // Simple hash function for deterministic randomness
+  const seed = index * 2654435761; // Use a prime multiplier for better distribution
+  const pseudo = Math.sin(seed) * 10000;
+  const random = pseudo - Math.floor(pseudo);
+
+  return Math.floor(random * (max - min + 1)) + min;
+}

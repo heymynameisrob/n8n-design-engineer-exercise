@@ -1,8 +1,8 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-
-import { App } from "@/App";
 import { Toaster } from "sonner";
+
+import { App } from "@/app";
 import { AppProviders } from "@/components/provider";
 
 import "./index.css";

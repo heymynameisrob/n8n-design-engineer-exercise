@@ -24,6 +24,7 @@ import { useNodesContext } from "@/components/provider/provider-node";
 import { typeDescriptions, typeNames } from "@/lib/constants";
 
 import type { Node } from "@/lib/types";
+import { NodeLogs } from "@/components/node/node-logs";
 
 export function NodeDialog() {
   const [ref, bounds] = useMeasure();
@@ -79,8 +80,11 @@ export function NodeDialog() {
               <ChevronDownIcon className="size-4 opacity-50" />
             </Button>
           </TabsContent>
-          <TabsContent value="logs">
-            <p>Logs</p>
+          <TabsContent
+            value="logs"
+            className="h-full px-6 py-4 flex flex-col gap-4"
+          >
+            <NodeLogs />
           </TabsContent>
         </Tabs>
       </div>
