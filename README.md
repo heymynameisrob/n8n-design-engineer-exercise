@@ -23,6 +23,8 @@ Here are a few key areas for improvement
 
 I found these issues the most burdensome when experiementing with nodes. I didn't get the sense my 'hands were free' to play and move around. This would be okay when I had exactly what I wanted in mind, essentially doing data entry, but when I wanted to get creative it felt like I had my hands tied. My inexperience with the platform has to be taken into account, but the extra abilities useful to 'power users' is exposed to early and can be overwhelming.
 
+---
+
 ### Solution
 
 I focused on addressing the above challenges first. I also kept focus navigation and key controls, including keyboard shortcuts, from the previous implementation. Additionally I also focused on a friendlier UX that made working with nodes less overwhemling. I did this by focusing on a few key areas:
@@ -41,6 +43,8 @@ Aesthetically I experimented with a friendly tone and style. Visually this moves
 - Form state management via `react-hook-form` + `zod`
 - Keyboard shortcuts using `react-hotkeys-hook`
 - Accessible primitives based on Radix UI patterns
+
+---
 
 ### Future Considerations
 
