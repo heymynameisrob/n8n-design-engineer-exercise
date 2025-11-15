@@ -1,6 +1,6 @@
 # 🔌 n8n Design Engineer Exercise
 
-TLDR: View components [here](/components/node)
+TLDR: View components [here](/tree/main/src/components/node)
 
 ### Challenge
 
@@ -21,7 +21,7 @@ Here are a few key areas for improvement
 - The quick actions above the node have no tooltip, making it difficult to know what they do
 - Error messages are seperated to where the error occured
 
-These
+I found these issues the most burdensome when experiementing with nodes. I didn't get the sense my 'hands were free' to play and move around. This would be okay when I had exactly what I wanted in mind, essentially doing data entry, but when I wanted to get creative it felt like I had my hands tied. My inexperience with the platform has to be taken into account, but the extra abilities useful to 'power users' is exposed to early and can be overwhelming.
 
 ### Solution
 
