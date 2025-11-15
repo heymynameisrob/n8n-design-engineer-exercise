@@ -1,53 +1,38 @@
-# n8n Design Engineer Exercise
+# 🔌 n8n Design Engineer Exercise
 
-This repo contains the work for [this](https://n8n.notion.site/Design-Engineer-take-home-assignment-2965b6e0c94f8078bf3de5f5263e7280) design engineering challenge.
+TLDR: View components [here](/components/node)
 
-To view the node component directly, go [here](/components/node/index.tsx)
+### Challenge
 
-## Getting setup
+The goal is to reimagine the the 'node' component, imagining what the next version of a workflow node could be.
 
-You can view a working version here:
+Particularly focusing on the main blocks (label, icon etc) as well as the various running states (e.g running, success, error), whilst also including configuration and quick actions like Play/Deactivate/Delete.
 
-If you want to run this locally, then clone the repo and run:
+[Read more](https://n8n.notion.site/Design-Engineer-take-home-assignment-2965b6e0c94f8078bf3de5f5263e7280)
 
-```bash
-nvm install
-yarn
-yarn dev
-```
+### Revewing the existing node
 
-## Background
+The workflow node is a powerful primitive that forms the basis of an automated workflow. There are _lots_ of configurable options for users to pick from and experiment with. This complexity compounds the more nodes you add to the workflow.
 
-The goal is to reimagine the next version of the 'node' component. Build a working prototype that includes existing functionality such as:
-
-- Main information (icon, label, etc.)
-- Multiple states with clear visual feedback (e.g., success, waiting, error…)
-- Quick actions (e.g., play, deactivate, delete)
-- Node actions menu (right-click or button-triggered)
-
-## Challenges
-
-Reviewing the current implementation, there are a few key areas for improvement.
+Here are a few key areas for improvement
 
 - The detail view to edit the node is a full dialog. Whilst this allows for showing a lot of information, it increases the cognitive weight of context switching. The delay in opening and closing the dialog, as well as the visual repainting makes the process feel slugish when jumping between nodes.
 - Context menu animation is janky. Scaling across the size on the y axis feels un-natural and makes the menu appearance sluggish
 - The quick actions above the node have no tooltip, making it difficult to know what they do
-- Error messages don't offer any resolution to action
+- Error messages are seperated to where the error occured
 
-Whilst we have limited research to go on, I'll focus on these challenges first. They seem like easy problems to solve that could improve the overall performance and experience of working with the node.
+These
 
-## Our Solution
+### Solution
 
-The goal is to reduce the friction when using the Node component. First by fixing the bugs and improving the UX based on the challenges above, then adding more delightful animations to key steps (e.g running a Node).
-
-This implementation focuses on:
+I focused on addressing the above challenges first. I also kept focus navigation and key controls, including keyboard shortcuts, from the previous implementation. Additionally I also focused on a friendlier UX that made working with nodes less overwhemling. I did this by focusing on a few key areas:
 
 - **Side Panel**: Persistent panel reduces context switching overhead. Included smooth height transitions using `framer-motion` creating a smooth transition between states.
 - **Context Menu**: Improve janky animation and fixed clipping bug. Relabeled some items as many were global actions not relevant to that specific node. Also used more casual language to make things feel friendlier.
 - **Delightful animations**: Added nice pulsing state animations which creates a sense of action when the step is executing.
 - **Clearer error validation**: Inline validation shows directly on the form and the node. Server validation shows in clear toast message.
 
-I also kept focus navigation and key controls, including keyboard shortcuts, from the previous implementation.
+Aesthetically I experimented with a friendly tone and style. Visually this moves too far away from the brand direction but I think there are some softer elements we could adopt. Also choosing casual language (e.g Run instead of execute) makes the experience more accessible.
 
 ### Technical Implementation
 
@@ -57,7 +42,7 @@ I also kept focus navigation and key controls, including keyboard shortcuts, fro
 - Keyboard shortcuts using `react-hotkeys-hook`
 - Accessible primitives based on Radix UI patterns
 
-## Considerations
+### Future Considerations
 
 A few patterns in here would need to be re-evaluated in production when working with 1000s of nodes, but for prototyping purposes we'll keep things simple.
 
