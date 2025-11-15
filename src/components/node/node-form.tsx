@@ -65,11 +65,6 @@ export function NodeForm({ nodeId }: NodeFormProps) {
     };
   }, [nodeId, form, setFormInstance]);
 
-  const nodesRef = React.useRef(nodes);
-  React.useEffect(() => {
-    nodesRef.current = nodes;
-  }, [nodes]);
-
   /** Auto update nodes on form change
    * Would need proper debouncing and stuff outside prototype
    */
@@ -87,7 +82,7 @@ export function NodeForm({ nodeId }: NodeFormProps) {
         fieldDefinitions,
       );
 
-      const updatedNodes = nodesRef.current.map((n) =>
+      const updatedNodes = nodes.map((n) =>
         n.id === nodeId
           ? { ...n, title: (title as string) || n.title, fields: updatedFields }
           : n,
@@ -97,7 +92,7 @@ export function NodeForm({ nodeId }: NodeFormProps) {
     });
 
     return () => subscription.unsubscribe();
-  }, [form, nodeId, setNodes, fieldDefinitions, node]);
+  }, [form, nodeId, setNodes, fieldDefinitions, node, nodes]);
 
   if (!node) return null;
 
