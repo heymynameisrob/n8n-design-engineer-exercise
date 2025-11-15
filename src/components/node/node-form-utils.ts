@@ -7,10 +7,8 @@ export function createFormSchema(fields: Field[]) {
   };
 
   fields.forEach((field) => {
-    let fieldSchema: z.ZodTypeAny;
-
     if (field.type === "text") {
-      fieldSchema = z.string();
+      let fieldSchema = z.string();
 
       // Apply required validation
       if (field.required) {
@@ -32,7 +30,7 @@ export function createFormSchema(fields: Field[]) {
 
       schemaShape[field.id] = fieldSchema;
     } else if (field.type === "textarea") {
-      fieldSchema = z.string();
+      let fieldSchema = z.string();
 
       // Apply required validation
       if (field.required) {
@@ -44,12 +42,9 @@ export function createFormSchema(fields: Field[]) {
 
       // Apply custom validation (e.g., whitespace check for code)
       if (field.customValidation) {
-        fieldSchema = fieldSchema.refine(
-          (value) => value.trim().length > 0,
-          {
-            message: field.customValidation.message,
-          },
-        );
+        fieldSchema = fieldSchema.refine((value: string) => value.trim().length > 0, {
+          message: field.customValidation.message,
+        });
       }
 
       schemaShape[field.id] = fieldSchema;
