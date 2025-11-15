@@ -1,6 +1,6 @@
 # 🔌 n8n Design Engineer Exercise
 
-TLDR: View components [here](/tree/main/src/components/node)
+TLDR: View components [here](/src/components/node)
 
 ### Challenge
 
