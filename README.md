@@ -1,6 +1,6 @@
 # 🔌 n8n Design Engineer Exercise
 
-TLDR: View components [here](/src/components/node)
+TLDR: View components [here](/src/components/node) and demo [here](https://n8n-exercise.netlify.app/)
 
 ### Challenge
 
@@ -9,6 +9,8 @@ The goal is to reimagine the the 'node' component, imagining what the next versi
 Particularly focusing on the main blocks (label, icon etc) as well as the various running states (e.g running, success, error), whilst also including configuration and quick actions like Play/Deactivate/Delete.
 
 [Read more](https://n8n.notion.site/Design-Engineer-take-home-assignment-2965b6e0c94f8078bf3de5f5263e7280)
+
+[View demo](https://n8n-exercise.netlify.app/)
 
 ### Revewing the existing node
 
