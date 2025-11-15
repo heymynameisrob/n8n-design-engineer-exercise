@@ -20,7 +20,7 @@ export function Key({
   );
 }
 
-export function Keys({ keys }: { keys: string[] }) {
+function Keys({ keys }: { keys: string[] }) {
   return (
     <div className="flex items-center gap-1">
       {keys.map((key) => (

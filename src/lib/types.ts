@@ -6,12 +6,21 @@ import { z } from "zod";
  * Also runtime validation helps in this case where the data shape is non-trival
  */
 
-export const NodeTypeSchema = z.enum(["http", "code", "webhook"]);
+const NodeTypeSchema = z.enum(["http", "code", "webhook"]);
 export type NodeType = z.infer<typeof NodeTypeSchema>;
 
 const BaseFieldSchema = z.object({
   id: z.string(),
   label: z.string(),
+  required: z.boolean().optional(),
+  validationType: z.enum(["url", "email", "none"]).optional(),
+  minLength: z.number().optional(),
+  customValidation: z
+    .object({
+      message: z.string(),
+      pattern: z.string().optional(),
+    })
+    .optional(),
 });
 
 const TextFieldSchema = BaseFieldSchema.extend({
@@ -37,7 +46,7 @@ const BooleanFieldSchema = BaseFieldSchema.extend({
   value: z.boolean(),
 });
 
-export const FieldSchema = z.discriminatedUnion("type", [
+const FieldSchema = z.discriminatedUnion("type", [
   TextFieldSchema,
   SelectFieldSchema,
   TextareaFieldSchema,
@@ -46,7 +55,7 @@ export const FieldSchema = z.discriminatedUnion("type", [
 
 export type Field = z.infer<typeof FieldSchema>;
 
-export const NodeSchema = z.object({
+const NodeSchema = z.object({
   id: z.number(),
   type: NodeTypeSchema,
   title: z.string(),
@@ -72,6 +81,8 @@ export const NodeFieldsHttp = [
     type: "text" as const,
     value: "",
     placeholder: "https://example.com",
+    required: true,
+    validationType: "url" as const,
   },
   {
     id: "http_input_3",
@@ -100,16 +111,23 @@ export const NodeFieldsCode = [
     type: "textarea" as const,
     value: "",
     placeholder: "// Write your code here",
+    required: true,
+    minLength: 1,
+    customValidation: {
+      message: "Code cannot be empty or whitespace only",
+    },
   },
 ] satisfies Field[];
 
-export const NodeFieldsWebhook = [
+const NodeFieldsWebhook = [
   {
     id: "webhook_input_1",
     label: "Webhook URL",
     type: "text" as const,
     value: "",
     placeholder: "https://your-webhook.com/endpoint",
+    required: true,
+    validationType: "url" as const,
   },
 ] satisfies Field[];
 

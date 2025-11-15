@@ -6,7 +6,7 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 /** NOTE(@heymynameisrob): Check if keyboard events should be ignored due to open dialogs, menus, or interactive elements */
-export function shouldIgnoreKeyboardEvent(event: KeyboardEvent): boolean {
+function shouldIgnoreKeyboardEvent(event: KeyboardEvent): boolean {
   event.stopPropagation();
 
   const hasOpenDialog = document.querySelector('[role="dialog"]');

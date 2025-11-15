@@ -35,4 +35,4 @@ function SelectOptGroup({
   return <optgroup className={cn(className)} {...props} />;
 }
 
-export { Select, SelectOptGroup, SelectOption };
+export { Select,  SelectOption };

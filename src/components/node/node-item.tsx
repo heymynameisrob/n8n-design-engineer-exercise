@@ -9,45 +9,6 @@ import { typeNames } from "@/lib/constants";
 
 import type { Node } from "@/lib/types";
 
-export const NodeItem = React.forwardRef<HTMLButtonElement, { node: Node }>(
-  ({ node }, ref) => {
-    const { selectedNode, setSelectedNode, runningNode } = useNodesContext();
-    const isNodeRunning = node.id === runningNode?.nodeId;
-
-    return (
-      <NodeRunningAnimation nodeId={node.id}>
-        <button
-          ref={ref}
-          className={cn(
-            "relative flex items-center gap-2 p-2 h-[58px] rounded-2xl bg-gray-1 border w-fit max-w-64 transition-shadow ring-0 ring-offset-0 ring-offset-background ring-ring outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
-            selectedNode === node.id && "ring-2 ring-offset-2",
-          )}
-          onClick={() => setSelectedNode(node.id)}
-          onFocus={() => setSelectedNode(node.id)}
-        >
-          <div className="flex items-center gap-2">
-            {isNodeRunning ? (
-              <NodeRunningIcon />
-            ) : (
-              <NodeTypeIcon node={node} />
-            )}
-            <div className="flex-1 flex flex-col items-start overflow-hidden pr-2">
-              <span className="text-gray-12 font-medium text-sm truncate w-full">
-                {node.title}
-              </span>
-              <span className="capitalize text-gray-10 font-medium text-sm">
-                {typeNames[node.type]}
-              </span>
-            </div>
-          </div>
-        </button>
-      </NodeRunningAnimation>
-    );
-  },
-);
-
-NodeItem.displayName = "NodeItem";
-
 function NodeRunningIcon() {
   const { runningNode } = useNodesContext();
 
@@ -152,3 +113,42 @@ function NodeRunningAnimation({
     </div>
   );
 }
+
+export const NodeItem = React.forwardRef<HTMLButtonElement, { node: Node }>(
+  ({ node }, ref) => {
+    const { selectedNode, setSelectedNode, runningNode } = useNodesContext();
+    const isNodeRunning = node.id === runningNode?.nodeId;
+
+    return (
+      <NodeRunningAnimation nodeId={node.id}>
+        <button
+          ref={ref}
+          className={cn(
+            "relative flex items-center gap-2 p-2 h-[58px] rounded-2xl bg-gray-1 border w-fit max-w-64 transition-shadow ring-0 ring-offset-0 ring-offset-background ring-ring outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
+            selectedNode === node.id && "ring-2 ring-offset-2",
+          )}
+          onClick={() => setSelectedNode(node.id)}
+          onFocus={() => setSelectedNode(node.id)}
+        >
+          <div className="flex items-center gap-2">
+            {isNodeRunning ? (
+              <NodeRunningIcon />
+            ) : (
+              <NodeTypeIcon node={node} />
+            )}
+            <div className="flex-1 flex flex-col items-start overflow-hidden pr-2">
+              <span className="text-gray-12 font-medium text-sm truncate w-full">
+                {node.title}
+              </span>
+              <span className="capitalize text-gray-10 font-medium text-sm">
+                {typeNames[node.type]}
+              </span>
+            </div>
+          </div>
+        </button>
+      </NodeRunningAnimation>
+    );
+  },
+);
+
+NodeItem.displayName = "NodeItem";

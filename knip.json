@@ -1,0 +1,20 @@
+{
+  "$schema": "https://unpkg.com/knip@5/schema.json",
+  "ignoreExportsUsedInFile": {
+    "interface": true,
+    "type": true
+  },
+  "entry": [
+    "src/{index,cli,main}.{js,cjs,mjs,jsx,ts,cts,mts,tsx}",
+    "src/{index,cli,main}.{js,cjs,mjs,jsx,ts,cts,mts,tsx}"
+  ],
+  "project": ["**/*.{js,cjs,mjs,jsx,ts,cts,mts,tsx,css}!"],
+  "ignore": [
+    "dist/**",
+    "build/**",
+    ".vite/**",
+    "node_modules/**",
+    "*.config.*"
+  ],
+  "tags": ["-lintignore"]
+}

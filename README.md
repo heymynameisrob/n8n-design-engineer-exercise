@@ -59,7 +59,9 @@ I also kept focus navigation and key controls, including keyboard shortcuts, fro
 
 ## Considerations
 
-There are several things I added for prototype purposes (e.g react-flow) to get a better sense how this Node works in it's actual environment.
+A few patterns in here would need to be re-evaluated in production when working with 1000s of nodes, but for prototyping purposes we'll keep things simple.
+
+Also, there are several things I added for prototype purposes (e.g react-flow) to get a better sense how this Node works in it's actual environment.
 
 Using it this way gave me some ideas for further iteration:
 

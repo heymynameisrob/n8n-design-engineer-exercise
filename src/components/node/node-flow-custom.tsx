@@ -17,22 +17,18 @@ export type CustomNodeData = {
 export const CustomFlowNode = React.memo(({ data }: NodeProps) => {
   const typedData = data as CustomNodeData;
   const { selectedNode } = useNodesContext();
-  const nodeRef = React.useRef<HTMLDivElement>(null);
+  const buttonRef = React.useRef<HTMLButtonElement>(null);
 
   // Focus the node when it's selected via keyboard navigation
   React.useEffect(() => {
-    if (selectedNode === typedData.node.id && nodeRef.current) {
-      // Find the button element inside NodeItem and focus it
-      const button = nodeRef.current.querySelector("button");
-      if (button) {
-        button.focus();
-      }
+    if (selectedNode === typedData.node.id && buttonRef.current) {
+      buttonRef.current.focus();
     }
   }, [selectedNode, typedData.node.id]);
 
   return (
     <NodeContextMenu node={typedData.node}>
-      <div ref={nodeRef}>
+      <div>
         {/* Target handle (input) - positioned at the left */}
         <Handle
           type="target"
@@ -47,7 +43,7 @@ export const CustomFlowNode = React.memo(({ data }: NodeProps) => {
         />
 
         {/* Render the existing NodeItem component */}
-        <NodeItem node={typedData.node} />
+        <NodeItem ref={buttonRef} node={typedData.node} />
 
         {/* Source handle (output) - positioned at the right */}
         <Handle

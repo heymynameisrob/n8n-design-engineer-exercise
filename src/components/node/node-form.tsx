@@ -17,92 +17,17 @@ import {
   FormMessage,
 } from "@/components/primitives/Form";
 import { cn } from "@/lib/utils";
+import {
+  createFormSchema,
+  nodeFieldsToFormValues,
+  formValuesToNodeFields,
+} from "@/components/node/node-form-utils";
 
-import { NodeFieldsMap, type Field, type NodeType } from "@/lib/types";
+import { NodeFieldsMap, type NodeType } from "@/lib/types";
 
 type NodeFormProps = {
   nodeId: number;
 };
-
-function createFormSchema(fields: Field[]) {
-  const schemaShape: Record<string, z.ZodTypeAny> = {
-    title: z.string().min(1, "Title is required"),
-  };
-
-  fields.forEach((field) => {
-    if (field.type === "text") {
-      // Add validation for required text fields (URL and Webhook URL require validation)
-      if (field.id === "http_input_2") {
-        schemaShape[field.id] = z
-          .string()
-          .min(1, "URL is required")
-          .url("Please enter a valid URL");
-      } else if (field.id === "webhook_input_1") {
-        schemaShape[field.id] = z
-          .string()
-          .min(1, "Webhook URL is required")
-          .url("Please enter a valid URL");
-      } else {
-        schemaShape[field.id] = z.string();
-      }
-    } else if (field.type === "textarea") {
-      // Add validation for code field
-      if (field.id === "code_input_1") {
-        schemaShape[field.id] = z
-          .string()
-          .min(1, "Code is required")
-          .refine((code) => code.trim().length > 0, {
-            message: "Code cannot be empty or whitespace only",
-          });
-      } else {
-        schemaShape[field.id] = z.string();
-      }
-    } else if (field.type === "select") {
-      schemaShape[field.id] = z.string();
-    } else if (field.type === "boolean") {
-      schemaShape[field.id] = z.boolean();
-    }
-  });
-
-  return z.object(schemaShape);
-}
-
-function nodeFieldsToFormValues(
-  nodeFields: Record<string, Field>[] | undefined,
-  nodeTitle: string,
-) {
-  const formValues: Record<string, string | boolean> = {
-    title: nodeTitle,
-  };
-
-  if (!nodeFields || !Array.isArray(nodeFields)) {
-    return formValues;
-  }
-
-  nodeFields.forEach((fieldObj) => {
-    const fieldId = Object.keys(fieldObj)[0];
-    const field = fieldObj[fieldId];
-    if (field && typeof field === "object" && "value" in field) {
-      formValues[fieldId] = field.value;
-    }
-  });
-
-  return formValues;
-}
-
-function formValuesToNodeFields(
-  formValues: Record<string, string | boolean>,
-  fieldDefinitions: Field[],
-) {
-  return fieldDefinitions.map((fieldDef) => {
-    return {
-      [fieldDef.id]: {
-        ...fieldDef,
-        value: formValues[fieldDef.id] ?? fieldDef.value,
-      },
-    };
-  });
-}
 
 export function NodeForm({ nodeId }: NodeFormProps) {
   const { nodes, setNodes, setFormInstance } = useNodesContext();
@@ -145,7 +70,7 @@ export function NodeForm({ nodeId }: NodeFormProps) {
     nodesRef.current = nodes;
   }, [nodes]);
 
-  /** Auto update nodes on form change */
+  /** Auto update nodes on form change with debouncing */
   React.useEffect(() => {
     if (!node) return;
 

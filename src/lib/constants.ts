@@ -41,4 +41,4 @@ export const keyboardShortcuts = {
 } as const;
 
 export type KeyboardShortcutKey = keyof typeof keyboardShortcuts;
-export type KeyboardShortcut = (typeof keyboardShortcuts)[KeyboardShortcutKey];
+type KeyboardShortcut = (typeof keyboardShortcuts)[KeyboardShortcutKey];
