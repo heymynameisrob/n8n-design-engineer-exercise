@@ -70,7 +70,9 @@ export function NodeForm({ nodeId }: NodeFormProps) {
     nodesRef.current = nodes;
   }, [nodes]);
 
-  /** Auto update nodes on form change with debouncing */
+  /** Auto update nodes on form change
+   * Would need proper debouncing and stuff outside prototype
+   */
   React.useEffect(() => {
     if (!node) return;
 
